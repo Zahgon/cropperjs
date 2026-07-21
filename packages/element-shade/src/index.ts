@@ -47,97 +47,23 @@ export default class CropperShade extends CropperElement {
   themeColor = 'rgba(0, 0, 0, 0.65)';
 
   protected set $canvas(element: CropperCanvas) {
-    canvasCache.set(this, element);
+      throw new Error("STUB");
   }
 
   protected get $canvas(): CropperCanvas {
-    return canvasCache.get(this);
+      throw new Error("STUB");
   }
 
   protected static get observedAttributes(): string[] {
-    return super.observedAttributes.concat([
-      'height',
-      'width',
-      'x',
-      'y',
-    ]);
+      throw new Error("STUB");
   }
 
   protected connectedCallback(): void {
-    super.connectedCallback();
-
-    const $canvas: CropperCanvas | null = this.closest(this.$getTagNameOf(CROPPER_CANVAS));
-
-    if ($canvas) {
-      this.$canvas = $canvas;
-      this.style.position = 'absolute';
-
-      const $selection: CropperSelection | null = $canvas.querySelector(
-        this.$getTagNameOf(CROPPER_SELECTION),
-      );
-
-      if ($selection) {
-        this.$onWindowResize = this.$render.bind(this);
-        this.$onCanvasActionStart = (event) => {
-          if ($selection.hidden && (event as CustomEvent).detail.action === ACTION_SELECT) {
-            this.hidden = false;
-          }
-        };
-        this.$onCanvasActionEnd = (event) => {
-          if ($selection.hidden && (event as CustomEvent).detail.action === ACTION_SELECT) {
-            this.hidden = true;
-          }
-        };
-        this.$onSelectionChange = (event) => {
-          const {
-            x,
-            y,
-            width,
-            height,
-          } = event.defaultPrevented ? $selection : (event as CustomEvent).detail;
-
-          this.$change(x, y, width, height);
-
-          if ($selection.hidden || (x === 0 && y === 0 && width === 0 && height === 0)) {
-            this.hidden = true;
-          }
-        };
-        on(window, EVENT_RESIZE, this.$onWindowResize);
-        on($canvas, EVENT_ACTION_START, this.$onCanvasActionStart);
-        on($canvas, EVENT_ACTION_END, this.$onCanvasActionEnd);
-        on($canvas, EVENT_CHANGE, this.$onSelectionChange);
-      }
-    }
-
-    this.$render();
+      throw new Error("STUB");
   }
 
   protected disconnectedCallback(): void {
-    const { $canvas } = this;
-
-    if ($canvas) {
-      if (this.$onWindowResize) {
-        off(window, EVENT_RESIZE, this.$onWindowResize);
-        this.$onWindowResize = null;
-      }
-
-      if (this.$onCanvasActionStart) {
-        off($canvas, EVENT_ACTION_START, this.$onCanvasActionStart);
-        this.$onCanvasActionStart = null;
-      }
-
-      if (this.$onCanvasActionEnd) {
-        off($canvas, EVENT_ACTION_END, this.$onCanvasActionEnd);
-        this.$onCanvasActionEnd = null;
-      }
-
-      if (this.$onSelectionChange) {
-        off($canvas, EVENT_CHANGE, this.$onSelectionChange);
-        this.$onSelectionChange = null;
-      }
-    }
-
-    super.disconnectedCallback();
+      throw new Error("STUB");
   }
 
   /**
@@ -149,26 +75,7 @@ export default class CropperShade extends CropperElement {
    * @returns {CropperShade} Returns `this` for chaining.
    */
   $change(x: number, y: number, width: number = this.width, height: number = this.height): this {
-    if (
-      !isNumber(x)
-      || !isNumber(y)
-      || !isNumber(width)
-      || !isNumber(height)
-      || (x === this.x && y === this.y && width === this.width && height === this.height)
-    ) {
-      return this;
-    }
-
-    if (this.hidden) {
-      this.hidden = false;
-    }
-
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-
-    return this.$render();
+      throw new Error("STUB");
   }
 
   /**
@@ -176,7 +83,7 @@ export default class CropperShade extends CropperElement {
    * @returns {CropperShade} Returns `this` for chaining.
    */
   $reset(): this {
-    return this.$change(0, 0, 0, 0);
+      throw new Error("STUB");
   }
 
   /**
@@ -184,11 +91,6 @@ export default class CropperShade extends CropperElement {
    * @returns {CropperShade} Returns `this` for chaining.
    */
   $render(): this {
-    return this.$setStyles({
-      transform: `translate(${this.x}px, ${this.y}px)`,
-      width: this.width,
-      height: this.height,
-      outlineWidth: WINDOW.innerWidth * WINDOW.devicePixelRatio,
-    });
+      throw new Error("STUB");
   }
 }

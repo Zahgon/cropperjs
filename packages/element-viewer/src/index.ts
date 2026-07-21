@@ -49,223 +49,66 @@ export default class CropperViewer extends CropperElement {
   slottable = false;
 
   protected set $image(element: CropperImage) {
-    imageCache.set(this, element);
+      throw new Error("STUB");
   }
 
   protected get $image(): CropperImage {
-    return imageCache.get(this);
+      throw new Error("STUB");
   }
 
   protected set $sourceImage(element: CropperImage) {
-    sourceImageCache.set(this, element);
+      throw new Error("STUB");
   }
 
   protected get $sourceImage(): CropperImage {
-    return sourceImageCache.get(this);
+      throw new Error("STUB");
   }
 
   protected set $canvas(element: CropperCanvas) {
-    canvasCache.set(this, element);
+      throw new Error("STUB");
   }
 
   protected get $canvas(): CropperCanvas {
-    return canvasCache.get(this);
+      throw new Error("STUB");
   }
 
   set $selection(element: CropperSelection) {
-    selectionCache.set(this, element);
+      throw new Error("STUB");
   }
 
   get $selection(): CropperSelection {
-    return selectionCache.get(this);
+      throw new Error("STUB");
   }
 
   protected static get observedAttributes(): string[] {
-    return super.observedAttributes.concat([
-      'resize',
-      'selection',
-    ]);
+      throw new Error("STUB");
   }
 
   protected connectedCallback(): void {
-    super.connectedCallback();
-
-    let $selection: CropperSelection | null = null;
-
-    if (this.selection) {
-      $selection = getRootDocument(this)?.querySelector(this.selection) ?? null;
-    } else {
-      $selection = this.closest(this.$getTagNameOf(CROPPER_SELECTION));
-    }
-
-    if (isElement($selection)) {
-      this.$selection = $selection;
-      this.$onSelectionChange = this.$handleSelectionChange.bind(this);
-      on($selection, EVENT_CHANGE, this.$onSelectionChange);
-
-      const $canvas: CropperCanvas | null = $selection.closest(this.$getTagNameOf(CROPPER_CANVAS));
-
-      if ($canvas) {
-        this.$canvas = $canvas;
-
-        const $sourceImage: CropperImage | null = $canvas.querySelector(
-          this.$getTagNameOf(CROPPER_IMAGE),
-        );
-
-        if ($sourceImage) {
-          this.$sourceImage = $sourceImage;
-          this.$image = $sourceImage.cloneNode(true) as CropperImage;
-          this.$getShadowRoot().appendChild(this.$image);
-          this.$onSourceImageLoad = this.$handleSourceImageLoad.bind(this);
-          this.$onSourceImageTransform = this.$handleSourceImageTransform.bind(this);
-          on($sourceImage.$image, EVENT_LOAD, this.$onSourceImageLoad);
-          on($sourceImage, EVENT_TRANSFORM, this.$onSourceImageTransform);
-        }
-      }
-
-      this.$render();
-    }
+      throw new Error("STUB");
   }
 
   protected disconnectedCallback(): void {
-    const { $selection, $sourceImage } = this;
-
-    if ($selection && this.$onSelectionChange) {
-      off($selection, EVENT_CHANGE, this.$onSelectionChange);
-      this.$onSelectionChange = null;
-    }
-
-    if ($sourceImage && this.$onSourceImageLoad) {
-      off($sourceImage.$image, EVENT_LOAD, this.$onSourceImageLoad);
-      this.$onSourceImageLoad = null;
-    }
-
-    if ($sourceImage && this.$onSourceImageTransform) {
-      off($sourceImage, EVENT_TRANSFORM, this.$onSourceImageTransform);
-      this.$onSourceImageTransform = null;
-    }
-
-    super.disconnectedCallback();
+      throw new Error("STUB");
   }
 
   protected $handleSelectionChange(event: Event): void {
-    this.$render(event.defaultPrevented ? this.$selection : (event as CustomEvent).detail);
+      throw new Error("STUB");
   }
 
   protected $handleSourceImageLoad(): void {
-    const { $image, $sourceImage } = this;
-    const oldSrc = $image.getAttribute('src');
-    const newSrc = $sourceImage.getAttribute('src');
-
-    if (newSrc && newSrc !== oldSrc) {
-      $image.setAttribute('src', newSrc);
-      $image.$ready(() => {
-        this.$render();
-      });
-    }
+      throw new Error("STUB");
   }
 
   protected $handleSourceImageTransform(event?: Event): void {
-    this.$render(undefined, (event as CustomEvent).detail.matrix);
+      throw new Error("STUB");
   }
 
   protected $render(selection?: Selection, matrix?: number[]): void {
-    const { $canvas, $selection } = this;
-
-    if (!selection && !$selection.hidden) {
-      selection = $selection;
-    }
-
-    if (!selection || (
-      selection.x === 0
-      && selection.y === 0
-      && selection.width === 0
-      && selection.height === 0
-    )) {
-      selection = {
-        x: 0,
-        y: 0,
-        width: $canvas.offsetWidth,
-        height: $canvas.offsetHeight,
-      };
-    }
-
-    const {
-      x,
-      y,
-      width,
-      height,
-    } = selection;
-    const styles: any = {};
-    const { clientWidth, clientHeight } = this;
-    let newWidth = clientWidth;
-    let newHeight = clientHeight;
-    let scale = NaN;
-
-    switch (this.resize) {
-      case RESIZE_BOTH:
-        scale = 1;
-        newWidth = width;
-        newHeight = height;
-        styles.width = width;
-        styles.height = height;
-        break;
-
-      case RESIZE_HORIZONTAL:
-        scale = height > 0 ? clientHeight / height : 0;
-        newWidth = width * scale;
-        styles.width = newWidth;
-        break;
-
-      case RESIZE_VERTICAL:
-        scale = width > 0 ? clientWidth / width : 0;
-        newHeight = height * scale;
-        styles.height = newHeight;
-        break;
-
-      case RESIZE_NONE:
-      default:
-        if (clientWidth > 0) {
-          scale = width > 0 ? clientWidth / width : 0;
-        } else if (clientHeight > 0) {
-          scale = height > 0 ? clientHeight / height : 0;
-        }
-    }
-
-    this.$scale = scale;
-    this.$setStyles(styles);
-
-    if (this.$sourceImage) {
-      // Transform the image by the selection offset after the next DOM update cycle
-      setTimeout(() => {
-        this.$transformImageByOffset(matrix ?? this.$sourceImage.$getTransform(), -x, -y);
-      });
-    }
+      throw new Error("STUB");
   }
 
   protected $transformImageByOffset(matrix: number[], x: number, y: number): void {
-    const {
-      $image,
-      $scale,
-      $sourceImage,
-    } = this;
-
-    if ($sourceImage && $image && $scale >= 0) {
-      const [a, b, c, d, e, f] = matrix;
-      const translateX = ((x * d) - (c * y)) / ((a * d) - (c * b));
-      const translateY = ((y * a) - (b * x)) / ((a * d) - (c * b));
-      const newE = a * translateX + c * translateY + e;
-      const newF = b * translateX + d * translateY + f;
-
-      // Do not use `$image` here, because it is just a clone of the source image
-      // and may not have the correct size when using SVG image format in Safari, see #1290.
-      $sourceImage.$ready((image) => {
-        this.$setStyles.call($image, {
-          width: image.naturalWidth * $scale,
-          height: image.naturalHeight * $scale,
-        });
-      });
-      $image.$setTransform(a, b, c, d, newE * $scale, newF * $scale);
-    }
+      throw new Error("STUB");
   }
 }

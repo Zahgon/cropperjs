@@ -6,7 +6,7 @@ import { WINDOW } from './constants';
  * @returns {boolean} Returns `true` if the given value is a string, else `false`.
  */
 export function isString(value: unknown): value is string {
-  return typeof value === 'string';
+    throw new Error("STUB");
 }
 
 /**
@@ -20,7 +20,7 @@ export const isNaN = Number.isNaN || WINDOW.isNaN;
  * @returns {boolean} Returns `true` if the given value is a number, else `false`.
  */
 export function isNumber(value: unknown): value is number {
-  return typeof value === 'number' && !isNaN(value);
+    throw new Error("STUB");
 }
 
 /**
@@ -29,7 +29,7 @@ export function isNumber(value: unknown): value is number {
  * @returns {boolean} Returns `true` if the given value is a positive number, else `false`.
  */
 export function isPositiveNumber(value: unknown): value is number {
-  return isNumber(value) && value > 0 && value < Infinity;
+    throw new Error("STUB");
 }
 
 /**
@@ -38,7 +38,7 @@ export function isPositiveNumber(value: unknown): value is number {
  * @returns {boolean} Returns `true` if the given value is undefined, else `false`.
  */
 export function isUndefined(value: unknown): value is undefined {
-  return typeof value === 'undefined';
+    throw new Error("STUB");
 }
 
 /**
@@ -58,18 +58,7 @@ const { hasOwnProperty } = Object.prototype;
  * @returns {boolean} Returns `true` if the given value is a plain object, else `false`.
  */
 export function isPlainObject(value: unknown): value is Record<string, unknown> {
-  if (!isObject(value)) {
-    return false;
-  }
-
-  try {
-    const { constructor } = value;
-    const { prototype } = constructor;
-
-    return constructor && prototype && hasOwnProperty.call(prototype, 'isPrototypeOf');
-  } catch (error) {
-    return false;
-  }
+    throw new Error("STUB");
 }
 
 /**
@@ -78,7 +67,7 @@ export function isPlainObject(value: unknown): value is Record<string, unknown> 
  * @returns {boolean} Returns `true` if the given value is a function, else `false`.
  */
 export function isFunction(value: unknown): value is (...args: unknown[]) => unknown {
-  return typeof value === 'function';
+    throw new Error("STUB");
 }
 
 /**
@@ -87,7 +76,7 @@ export function isFunction(value: unknown): value is (...args: unknown[]) => unk
  * @returns {boolean} Returns `true` if the given node is an element; otherwise, `false`.
  */
 export function isElement(node: unknown): node is Element {
-  return typeof node === 'object' && node !== null && (node as Node).nodeType === 1;
+    throw new Error("STUB");
 }
 
 const REGEXP_CAMEL_CASE = /([a-z\d])([A-Z])/g;
@@ -109,7 +98,7 @@ const REGEXP_KEBAB_CASE = /-[A-z\d]/g;
  * @returns {string} Returns the transformed value.
  */
 export function toCamelCase(value: string): string {
-  return value.replace(REGEXP_KEBAB_CASE, (substring: string) => substring.slice(1).toUpperCase());
+    throw new Error("STUB");
 }
 
 const REGEXP_SPACES = /\s\s*/;
@@ -128,9 +117,7 @@ export function off(
   listener: EventListenerOrEventListenerObject,
   options?: EventListenerOptions,
 ): void {
-  types.trim().split(REGEXP_SPACES).forEach((type) => {
-    target.removeEventListener(type, listener, options);
-  });
+    throw new Error("STUB");
 }
 
 /**
@@ -147,9 +134,7 @@ export function on(
   listener: EventListenerOrEventListenerObject,
   options?: AddEventListenerOptions,
 ): void {
-  types.trim().split(REGEXP_SPACES).forEach((type) => {
-    target.addEventListener(type, listener, options);
-  });
+    throw new Error("STUB");
 }
 
 /**
@@ -165,10 +150,7 @@ export function once(
   listener: EventListenerOrEventListenerObject,
   options?: AddEventListenerOptions,
 ): void {
-  on(target, types, listener, {
-    ...options,
-    once: true,
-  });
+    throw new Error("STUB");
 }
 
 const defaultEventOptions: CustomEventInit = {
@@ -192,11 +174,7 @@ export function emit(
   detail?: unknown,
   options?: CustomEventInit,
 ): boolean {
-  return target.dispatchEvent(new CustomEvent(type, {
-    ...defaultEventOptions,
-    detail,
-    ...options,
-  }));
+    throw new Error("STUB");
 }
 
 /**
@@ -207,12 +185,7 @@ export function emit(
  * @returns {EventTarget | null} The first element in the composed path, or the original event target.
  */
 export function getComposedPathTarget(event: Event): EventTarget | null {
-  if (typeof (event as any).composedPath === 'function') {
-    const path = (event as any).composedPath();
-    return path.find(isElement) || event.target;
-  }
-
-  return event.target;
+    throw new Error("STUB");
 }
 
 const resolvedPromise: Promise<any> = Promise.resolve();
@@ -224,9 +197,7 @@ const resolvedPromise: Promise<any> = Promise.resolve();
  * @returns {Promise} A promise that resolves to nothing.
  */
 export function nextTick(context?: unknown, callback?: () => void): Promise<void> {
-  return callback
-    ? resolvedPromise.then(context ? callback.bind(context) : callback)
-    : resolvedPromise;
+    throw new Error("STUB");
 }
 
 /**
@@ -235,22 +206,7 @@ export function nextTick(context?: unknown, callback?: () => void): Promise<void
  * @returns {Document|DocumentFragment|null} The document node.
  */
 export function getRootDocument(element: Element): Document | DocumentFragment | null {
-  const rootNode = element.getRootNode();
-
-  switch (rootNode.nodeType) {
-    case 1:
-      return rootNode.ownerDocument;
-
-    case 9:
-      return rootNode as Document;
-
-    case 11:
-      return rootNode as DocumentFragment;
-
-    default:
-  }
-
-  return null;
+    throw new Error("STUB");
 }
 
 /**
@@ -262,13 +218,7 @@ export function getOffset(element: Element): {
   left: number;
   top: number;
 } {
-  const { documentElement } = element.ownerDocument;
-  const box = element.getBoundingClientRect();
-
-  return {
-    left: box.left + (WINDOW.pageXOffset - documentElement.clientLeft),
-    top: box.top + (WINDOW.pageYOffset - documentElement.clientTop),
-  };
+    throw new Error("STUB");
 }
 
 const REGEXP_ANGLE_UNIT = /deg|g?rad|turn$/i;
@@ -280,27 +230,7 @@ const REGEXP_ANGLE_UNIT = /deg|g?rad|turn$/i;
  * @returns {number} Returns the radian number.
  */
 export function toAngleInRadian(angle: number | string): number {
-  const value = parseFloat(angle as string) || 0;
-
-  if (value !== 0) {
-    const [unit = 'rad'] = String(angle).match(REGEXP_ANGLE_UNIT) || [];
-
-    switch (unit.toLowerCase()) {
-      case 'deg':
-        return (value / 360) * (Math.PI * 2);
-
-      case 'grad':
-        return (value / 400) * (Math.PI * 2);
-
-      case 'turn':
-        return value * (Math.PI * 2);
-
-      // case 'rad':
-      default:
-    }
-  }
-
-  return value;
+    throw new Error("STUB");
 }
 
 interface SizeAdjustmentData {
@@ -336,30 +266,7 @@ export function getAdjustedSizes(
     width: number;
     height: number;
   } {
-  const { aspectRatio } = data;
-  let { width, height } = data as SizeAdjustmentData;
-  const isValidWidth = isPositiveNumber(width);
-  const isValidHeight = isPositiveNumber(height);
-
-  if (isValidWidth && isValidHeight) {
-    const adjustedWidth = height * aspectRatio;
-
-    if ((type === SIZE_ADJUSTMENT_TYPE_CONTAIN && adjustedWidth > width)
-      || (type === SIZE_ADJUSTMENT_TYPE_COVER && adjustedWidth < width)) {
-      height = width / aspectRatio;
-    } else {
-      width = height * aspectRatio;
-    }
-  } else if (isValidWidth) {
-    height = width / aspectRatio;
-  } else if (isValidHeight) {
-    width = height * aspectRatio;
-  }
-
-  return {
-    width,
-    height,
-  };
+    throw new Error("STUB");
 }
 
 /**
@@ -369,24 +276,5 @@ export function getAdjustedSizes(
  * @returns {Array} Returns the result matrix.
  */
 export function multiplyMatrices(matrix: number[], ...args: number[][]): number[] {
-  if (args.length === 0) {
-    return matrix;
-  }
-
-  const [a1, b1, c1, d1, e1, f1] = matrix;
-  const [a2, b2, c2, d2, e2, f2] = args[0];
-
-  // ┌ a1 c1 e1 ┐   ┌ a2 c2 e2 ┐
-  // │ b1 d1 f1 │ × │ b2 d2 f2 │
-  // └ 0  0  1  ┘   └ 0  0  1  ┘
-  matrix = [
-    a1 * a2 + c1 * b2/* + e1 * 0 */,
-    b1 * a2 + d1 * b2/* + f1 * 0 */,
-    a1 * c2 + c1 * d2/* + e1 * 0 */,
-    b1 * c2 + d1 * d2/* + f1 * 0 */,
-    a1 * e2 + c1 * f2 + e1/* * 1 */,
-    b1 * e2 + d1 * f2 + f1/* * 1 */,
-  ];
-
-  return multiplyMatrices(matrix, ...args.slice(1));
+    throw new Error("STUB");
 }

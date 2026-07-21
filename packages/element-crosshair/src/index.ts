@@ -16,8 +16,6 @@ export default class CropperCrosshair extends CropperElement {
   themeColor = 'rgba(238, 238, 238, 0.5)';
 
   protected static get observedAttributes(): string[] {
-    return super.observedAttributes.concat([
-      'centered',
-    ]);
+      throw new Error("STUB");
   }
 }

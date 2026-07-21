@@ -97,281 +97,39 @@ export default class CropperImage extends CropperElement {
   srcset = '';
 
   protected set $canvas(element: CropperCanvas) {
-    canvasCache.set(this, element);
+      throw new Error("STUB");
   }
 
   protected get $canvas(): CropperCanvas {
-    return canvasCache.get(this);
+      throw new Error("STUB");
   }
 
   protected static get observedAttributes(): string[] {
-    return super.observedAttributes.concat(NATIVE_ATTRIBUTES, [
-      'initial-center-size',
-      'rotatable',
-      'scalable',
-      'skewable',
-      'translatable',
-    ]);
+      throw new Error("STUB");
   }
 
   protected attributeChangedCallback(name: string, oldValue: string, newValue: string): void {
-    if (Object.is(newValue, oldValue)) {
-      return;
-    }
-
-    super.attributeChangedCallback(name, oldValue, newValue);
-
-    // Inherits the native attributes
-    if (NATIVE_ATTRIBUTES.includes(name)) {
-      this.$image.setAttribute(name, newValue);
-    }
+      throw new Error("STUB");
   }
 
   protected $propertyChangedCallback(name: string, oldValue: unknown, newValue: unknown): void {
-    if (Object.is(newValue, oldValue)) {
-      return;
-    }
-
-    super.$propertyChangedCallback(name, oldValue, newValue);
-
-    switch (name) {
-      case 'initialCenterSize':
-        this.$nextTick(() => {
-          this.$center(newValue as string);
-        });
-        break;
-
-      case 'src':
-        this.$isReady = false;
-        break;
-
-      default:
-    }
+      throw new Error("STUB");
   }
 
   protected connectedCallback(): void {
-    super.connectedCallback();
-
-    const { $image } = this;
-    const $canvas: CropperCanvas | null = this.closest(this.$getTagNameOf(CROPPER_CANVAS));
-
-    if ($canvas) {
-      this.$canvas = $canvas;
-      this.$setStyles({
-        // Make it a block element to avoid side effects (#1074).
-        display: 'block',
-        position: 'absolute',
-      });
-
-      this.$onCanvasActionStart = (event: Event | CustomEvent) => {
-        this.$actionStartTarget = (event as CustomEvent).detail?.relatedEvent?.target;
-      };
-      this.$onCanvasActionEnd = () => {
-        this.$actionStartTarget = null;
-      };
-      this.$onCanvasAction = this.$handleAction.bind(this);
-      on($canvas, EVENT_ACTION_START, this.$onCanvasActionStart);
-      on($canvas, EVENT_ACTION_END, this.$onCanvasActionEnd);
-      on($canvas, EVENT_ACTION, this.$onCanvasAction);
-    }
-
-    this.$onLoad = this.$handleLoad.bind(this);
-    on($image, EVENT_LOAD, this.$onLoad);
-    this.$getShadowRoot().appendChild($image);
+      throw new Error("STUB");
   }
 
   protected disconnectedCallback(): void {
-    const { $image, $canvas } = this;
-
-    if ($canvas) {
-      if (this.$onCanvasActionStart) {
-        off($canvas, EVENT_ACTION_START, this.$onCanvasActionStart);
-        this.$onCanvasActionStart = null;
-      }
-
-      if (this.$onCanvasActionEnd) {
-        off($canvas, EVENT_ACTION_END, this.$onCanvasActionEnd);
-        this.$onCanvasActionEnd = null;
-      }
-
-      if (this.$onCanvasAction) {
-        off($canvas, EVENT_ACTION, this.$onCanvasAction);
-        this.$onCanvasAction = null;
-      }
-    }
-
-    if ($image && this.$onLoad) {
-      off($image, EVENT_LOAD, this.$onLoad);
-      this.$onLoad = null;
-    }
-
-    this.$getShadowRoot().removeChild($image);
-    super.disconnectedCallback();
+      throw new Error("STUB");
   }
 
   protected $handleLoad(): void {
-    const { $image } = this;
-
-    this.$setStyles({
-      width: $image.naturalWidth,
-      height: $image.naturalHeight,
-    });
-
-    if (this.$canvas) {
-      this.$center(this.initialCenterSize);
-    }
-
-    this.$isReady = true;
+      throw new Error("STUB");
   }
 
   protected $handleAction(event: Event | CustomEvent): void {
-    if (this.hidden || !(this.rotatable || this.scalable || this.translatable)) {
-      return;
-    }
-
-    const { $canvas } = this;
-    const { detail } = event as CustomEvent;
-
-    if (detail) {
-      const { relatedEvent } = detail;
-      let { action } = detail;
-
-      if (action === ACTION_TRANSFORM && (!this.rotatable || !this.scalable)) {
-        if (this.rotatable) {
-          action = ACTION_ROTATE;
-        } else if (this.scalable) {
-          action = ACTION_SCALE;
-        } else {
-          action = ACTION_NONE;
-        }
-      }
-
-      switch (action) {
-        case ACTION_MOVE:
-          if (this.translatable) {
-            let $selection: CropperSelection | null = null;
-
-            if (relatedEvent) {
-              $selection = relatedEvent.target.closest(this.$getTagNameOf(CROPPER_SELECTION));
-            }
-
-            if (!$selection) {
-              $selection = $canvas.querySelector(this.$getTagNameOf(CROPPER_SELECTION));
-            }
-
-            if ($selection && $selection.multiple && !$selection.active) {
-              $selection = $canvas.querySelector(`${this.$getTagNameOf(CROPPER_SELECTION)}[active]`);
-            }
-
-            if (!$selection || $selection.hidden || !$selection.movable || $selection.dynamic
-              || !(this.$actionStartTarget && $selection.contains(this.$actionStartTarget as Node))
-            ) {
-              this.$move(detail.endX - detail.startX, detail.endY - detail.startY);
-            }
-          }
-          break;
-
-        case ACTION_ROTATE:
-          if (this.rotatable) {
-            if (relatedEvent) {
-              const { x, y } = this.getBoundingClientRect();
-
-              this.$rotate(
-                detail.rotate,
-                relatedEvent.clientX - x,
-                relatedEvent.clientY - y,
-              );
-            } else {
-              this.$rotate(detail.rotate);
-            }
-          }
-          break;
-
-        case ACTION_SCALE:
-          if (this.scalable) {
-            if (relatedEvent) {
-              const $selection: CropperSelection | null = relatedEvent.target.closest(
-                this.$getTagNameOf(CROPPER_SELECTION),
-              );
-
-              if (
-                !$selection
-                || !$selection.zoomable
-                || ($selection.zoomable && $selection.dynamic)
-              ) {
-                const { x, y } = this.getBoundingClientRect();
-
-                this.$zoom(
-                  detail.scale,
-                  relatedEvent.clientX - x,
-                  relatedEvent.clientY - y,
-                );
-              }
-            } else {
-              this.$zoom(detail.scale);
-            }
-          }
-          break;
-
-        case ACTION_TRANSFORM:
-          if (this.rotatable && this.scalable) {
-            const { rotate } = detail;
-            let { scale } = detail;
-
-            if (scale < 0) {
-              scale = 1 / (1 - scale);
-            } else {
-              scale += 1;
-            }
-
-            const cos = Math.cos(rotate);
-            const sin = Math.sin(rotate);
-            const [scaleX, skewY, skewX, scaleY] = [
-              cos * scale,
-              sin * scale,
-              -sin * scale,
-              cos * scale,
-            ];
-
-            if (relatedEvent) {
-              const clientRect = this.getBoundingClientRect();
-              const x = relatedEvent.clientX - clientRect.x;
-              const y = relatedEvent.clientY - clientRect.y;
-              const [a, b, c, d] = this.$matrix;
-              const originX = clientRect.width / 2;
-              const originY = clientRect.height / 2;
-              const moveX = x - originX;
-              const moveY = y - originY;
-              const translateX = ((moveX * d) - (c * moveY)) / ((a * d) - (c * b));
-              const translateY = ((moveY * a) - (b * moveX)) / ((a * d) - (c * b));
-
-              /**
-               * Equals to
-               * this.$rotate(rotate, x, y);
-               * this.$scale(scale, x, y);
-               */
-              this.$transform(
-                scaleX,
-                skewY,
-                skewX,
-                scaleY,
-                translateX * (1 - scaleX) + translateY * skewX,
-                translateY * (1 - scaleY) + translateX * skewY,
-              );
-            } else {
-              /**
-               * Equals to
-               * this.$rotate(rotate);
-               * this.$scale(scale);
-               */
-              this.$transform(scaleX, skewY, skewX, scaleY, 0, 0);
-            }
-          }
-          break;
-
-        default:
-      }
-    }
+      throw new Error("STUB");
   }
 
   /**
@@ -380,44 +138,7 @@ export default class CropperImage extends CropperElement {
    * @returns {Promise} Returns a promise that resolves to the image element.
    */
   $ready(callback?: (image: HTMLImageElement) => unknown): Promise<HTMLImageElement> {
-    const { $image } = this;
-    const promise = new Promise<HTMLImageElement>((resolve, reject) => {
-      const error = new Error('Failed to load the image source');
-
-      if ($image.complete) {
-        if ($image.naturalWidth > 0 && $image.naturalHeight > 0) {
-          resolve($image);
-        } else {
-          reject(error);
-        }
-      } else {
-        const onLoad = () => {
-          // eslint-disable-next-line @typescript-eslint/no-use-before-define
-          off($image, EVENT_ERROR, onError);
-
-          // Ensure the image is fully rendered.
-          setTimeout(() => {
-            resolve($image);
-          });
-        };
-        const onError = () => {
-          off($image, EVENT_LOAD, onLoad);
-          reject(error);
-        };
-
-        once($image, EVENT_LOAD, onLoad);
-        once($image, EVENT_ERROR, onError);
-      }
-    });
-
-    if (isFunction(callback)) {
-      promise.then((image) => {
-        callback(image);
-        return image;
-      });
-    }
-
-    return promise;
+      throw new Error("STUB");
   }
 
   /**
@@ -426,62 +147,7 @@ export default class CropperImage extends CropperElement {
    * @returns {CropperImage} Returns `this` for chaining.
    */
   $center(size?: string): this {
-    const { parentElement } = this;
-
-    if (!parentElement) {
-      return this;
-    }
-
-    const container = parentElement.getBoundingClientRect();
-    const containerWidth = container.width;
-    const containerHeight = container.height;
-    const {
-      x,
-      y,
-      width,
-      height,
-    } = this.getBoundingClientRect();
-    const startX = x + (width / 2);
-    const startY = y + (height / 2);
-    const endX = container.x + (containerWidth / 2);
-    const endY = container.y + (containerHeight / 2);
-    const { translatable } = this;
-
-    if (!translatable && !this.$isReady) {
-      this.translatable = true;
-      this.$nextTick(() => {
-        this.translatable = translatable;
-      });
-    }
-
-    this.$move(endX - startX, endY - startY);
-
-    if (size && (width !== containerWidth || height !== containerHeight)) {
-      const scaleX = containerWidth / width;
-      const scaleY = containerHeight / height;
-      const { scalable } = this;
-
-      if (size && !scalable && !this.$isReady) {
-        this.scalable = true;
-        this.$nextTick(() => {
-          this.scalable = scalable;
-        });
-      }
-
-      switch (size) {
-        case 'cover':
-          this.$scale(Math.max(scaleX, scaleY));
-          break;
-
-        case 'contain':
-          this.$scale(Math.min(scaleX, scaleY));
-          break;
-
-        default:
-      }
-    }
-
-    return this;
+      throw new Error("STUB");
   }
 
   /**
@@ -491,15 +157,7 @@ export default class CropperImage extends CropperElement {
    * @returns {CropperImage} Returns `this` for chaining.
    */
   $move(x: number, y: number = x): this {
-    if (this.translatable && isNumber(x) && isNumber(y)) {
-      const [a, b, c, d] = this.$matrix;
-      const e = ((x * d) - (c * y)) / ((a * d) - (c * b));
-      const f = ((y * a) - (b * x)) / ((a * d) - (c * b));
-
-      this.$translate(e, f);
-    }
-
-    return this;
+      throw new Error("STUB");
   }
 
   /**
@@ -509,15 +167,7 @@ export default class CropperImage extends CropperElement {
    * @returns {CropperImage} Returns `this` for chaining.
    */
   $moveTo(x: number, y: number = x): this {
-    if (this.translatable && isNumber(x) && isNumber(y)) {
-      const [a, b, c, d] = this.$matrix;
-      const e = ((x * d) - (c * y)) / ((a * d) - (c * b));
-      const f = ((y * a) - (b * x)) / ((a * d) - (c * b));
-
-      this.$setTransform(a, b, c, d, e, f);
-    }
-
-    return this;
+      throw new Error("STUB");
   }
 
   /**
@@ -530,42 +180,7 @@ export default class CropperImage extends CropperElement {
    * @returns {CropperImage} Returns `this` for chaining.
    */
   $rotate(angle: number | string, x?: number, y?: number): this {
-    if (this.rotatable) {
-      const radian = toAngleInRadian(angle);
-      const cos = Math.cos(radian);
-      const sin = Math.sin(radian);
-      const [scaleX, skewY, skewX, scaleY] = [cos, sin, -sin, cos];
-
-      if (isNumber(x) && isNumber(y)) {
-        const [a, b, c, d] = this.$matrix;
-        const { width, height } = this.getBoundingClientRect();
-        const originX = width / 2;
-        const originY = height / 2;
-        const moveX = x - originX;
-        const moveY = y - originY;
-        const translateX = ((moveX * d) - (c * moveY)) / ((a * d) - (c * b));
-        const translateY = ((moveY * a) - (b * moveX)) / ((a * d) - (c * b));
-
-        /**
-         * Equals to
-         * this.$translate(translateX, translateX);
-         * this.$rotate(angle);
-         * this.$translate(-translateX, -translateX);
-         */
-        this.$transform(
-          scaleX,
-          skewY,
-          skewX,
-          scaleY,
-          translateX * (1 - scaleX) - translateY * skewX,
-          translateY * (1 - scaleY) - translateX * skewY,
-        );
-      } else {
-        this.$transform(scaleX, skewY, skewX, scaleY, 0, 0);
-      }
-    }
-
-    return this;
+      throw new Error("STUB");
   }
 
   /**
@@ -576,38 +191,7 @@ export default class CropperImage extends CropperElement {
    * @returns {CropperImage} Returns `this` for chaining.
    */
   $zoom(scale: number, x?: number, y?: number): this {
-    if (!this.scalable || scale === 0) {
-      return this;
-    }
-
-    if (scale < 0) {
-      scale = 1 / (1 - scale);
-    } else {
-      scale += 1;
-    }
-
-    if (isNumber(x) && isNumber(y)) {
-      const [a, b, c, d] = this.$matrix;
-      const { width, height } = this.getBoundingClientRect();
-      const originX = width / 2;
-      const originY = height / 2;
-      const moveX = x - originX;
-      const moveY = y - originY;
-      const translateX = ((moveX * d) - (c * moveY)) / ((a * d) - (c * b));
-      const translateY = ((moveY * a) - (b * moveX)) / ((a * d) - (c * b));
-
-      /**
-       * Equals to
-       * this.$translate(translateX, translateX);
-       * this.$scale(scale);
-       * this.$translate(-translateX, -translateX);
-       */
-      this.$transform(scale, 0, 0, scale, translateX * (1 - scale), translateY * (1 - scale));
-    } else {
-      this.$scale(scale);
-    }
-
-    return this;
+      throw new Error("STUB");
   }
 
   /**
@@ -619,11 +203,7 @@ export default class CropperImage extends CropperElement {
    * @returns {CropperImage} Returns `this` for chaining.
    */
   $scale(x: number, y: number = x): this {
-    if (this.scalable) {
-      this.$transform(x, 0, 0, y, 0, 0);
-    }
-
-    return this;
+      throw new Error("STUB");
   }
 
   /**
@@ -635,14 +215,7 @@ export default class CropperImage extends CropperElement {
    * @returns {CropperImage} Returns `this` for chaining.
    */
   $skew(x: number | string, y: number | string = 0): this {
-    if (this.skewable) {
-      const radianX = toAngleInRadian(x);
-      const radianY = toAngleInRadian(y);
-
-      this.$transform(1, Math.tan(radianY), Math.tan(radianX), 1, 0, 0);
-    }
-
-    return this;
+      throw new Error("STUB");
   }
 
   /**
@@ -654,11 +227,7 @@ export default class CropperImage extends CropperElement {
    * @returns {CropperImage} Returns `this` for chaining.
    */
   $translate(x: number, y: number = x): this {
-    if (this.translatable && isNumber(x) && isNumber(y)) {
-      this.$transform(1, 0, 0, 1, x, y);
-    }
-
-    return this;
+      throw new Error("STUB");
   }
 
   /**
@@ -674,18 +243,7 @@ export default class CropperImage extends CropperElement {
    * @returns {CropperImage} Returns `this` for chaining.
    */
   $transform(a: number, b: number, c: number, d: number, e: number, f: number): this {
-    if (
-      isNumber(a)
-      && isNumber(b)
-      && isNumber(c)
-      && isNumber(d)
-      && isNumber(e)
-      && isNumber(f)
-    ) {
-      return this.$setTransform(multiplyMatrices(this.$matrix, [a, b, c, d, e, f]));
-    }
-
-    return this;
+      throw new Error("STUB");
   }
 
   /**
@@ -707,35 +265,7 @@ export default class CropperImage extends CropperElement {
     e?: number,
     f?: number,
   ): this {
-    if (this.rotatable || this.scalable || this.skewable || this.translatable) {
-      if (Array.isArray(a)) {
-        [a, b, c, d, e, f] = a;
-      }
-
-      if (
-        isNumber(a)
-        && isNumber(b)
-        && isNumber(c)
-        && isNumber(d)
-        && isNumber(e)
-        && isNumber(f)
-      ) {
-        const oldMatrix = [...this.$matrix];
-        const newMatrix = [a, b, c, d, e, f];
-
-        if (this.$emit(EVENT_TRANSFORM, {
-          matrix: newMatrix,
-          oldMatrix,
-        }) === false) {
-          return this;
-        }
-
-        this.$matrix = newMatrix;
-        this.style.transform = `matrix(${newMatrix.join(', ')})`;
-      }
-    }
-
-    return this;
+      throw new Error("STUB");
   }
 
   /**
@@ -744,7 +274,7 @@ export default class CropperImage extends CropperElement {
    * @returns {Array} Returns the readonly transformation matrix.
    */
   $getTransform(): number[] {
-    return this.$matrix.slice();
+      throw new Error("STUB");
   }
 
   /**
@@ -753,6 +283,6 @@ export default class CropperImage extends CropperElement {
    * @returns {CropperImage} Returns `this` for chaining.
    */
   $resetTransform(): this {
-    return this.$setTransform([1, 0, 0, 1, 0, 0]);
+      throw new Error("STUB");
   }
 }

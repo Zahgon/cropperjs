@@ -22,9 +22,6 @@ export default class CropperHandle extends CropperElement {
   themeColor = 'rgba(51, 153, 255, 0.5)';
 
   protected static get observedAttributes(): string[] {
-    return super.observedAttributes.concat([
-      'action',
-      'plain',
-    ]);
+      throw new Error("STUB");
   }
 }
